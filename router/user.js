@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:54:45
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-17 11:59:01
+ * @LastEditTime: 2023-07-17 17:07:56
  * @FilePath: \vue3-ts-server\router\user.js
  */
 const express = require('express')
@@ -14,6 +14,8 @@ const userHandler = require('../router_handler/user')
 
 // 登录
 router.post('/login', userHandler.login)
+// 添加用户接口
+router.post('/addUser', userHandler.addUser);
 
 // 将路由对象共享出去
 module.exports = router
