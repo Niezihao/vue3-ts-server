@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:51:24
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-17 16:22:02
+ * @LastEditTime: 2023-07-19 11:46:55
  * @FilePath: \vue3-ts-server\app.js
  */
 // 导入 express 模块
@@ -13,6 +13,11 @@ const app = express()
 const userRouter = require('./router/user')
 // 导入 cors 中间件
 const cors = require('cors')
+// 导入配置文件
+const config = require('./config/index');
+// 解析 token 的中间件
+const expressJWT = require('express-jwt');
+
 // 将 cors 注册为全局中间件
 app.use(cors())
 const bodyParser = require('body-parser');
@@ -22,6 +27,12 @@ app.use(
     })
 );
 app.use(bodyParser.json());
+
+// 使用 .unless({ path: [/^/api//] }) 指定哪些接口不需要进行 Token 的身份认证
+app.use(
+    expressJWT({ secret: config.jwtSecretKey }).unless({ path: ['/user/login', '/user/checkCode', '/user/refreshToken'] })
+);
+
 app.use('/user', userRouter)
 
 // 此段代码要放置在路由之后才可捕获到错误
@@ -31,6 +42,8 @@ const joi = require('joi');
 app.use((err, req, res, next) => {
     // 数据验证失败
     if (err instanceof joi.ValidationError) return res.send({ code: 1, message: err.message });
+    // token解析失败
+    if (err.name === 'UnauthorizedError') return res.send({ code: 401, message: '身份认证失败' });
     // 未知错误
     return res.send({ code: 500, message: err });
 });

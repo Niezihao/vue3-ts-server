@@ -1,3 +1,10 @@
+/*
+ * @Author: niezihao 1332421989@qq.com
+ * @Date: 2023-07-17 16:17:06
+ * @LastEditors: niezihao 1332421989@qq.com
+ * @LastEditTime: 2023-07-19 11:14:25
+ * @FilePath: \vue3-ts-server\schema\user.js
+ */
 let joi = require('joi');
 // 允许未设置规则的未知键
 joi = joi.defaults((schema) =>
@@ -17,11 +24,14 @@ joi = joi.defaults((schema) =>
 const username = joi.string().alphanum().min(1).max(10).required();
 // 密码的验证规则
 const password = joi
-    .string()
-    .pattern(/^[\S]{6,12}$/)
-    .required();
+  .string()
+  .pattern(/^[\S]{6,12}$/)
+  .required();
 const checkCode = joi.string().alphanum().min(4).max(4).required();
 const uuid = joi.number().required();
+const nickname = joi.string();
+const email = joi.string().email();
+const status = joi.number().valid(0, 1);
 
 // 登录表单的验证规则对象
 exports.user_login_schema = joi.object().keys({
@@ -35,6 +45,23 @@ exports.user_login_schema = joi.object().keys({
 exports.add_user_schema = joi.object().keys({
     username,
     password,
-    // status
+    status
 });
 
+const pageSize = joi.number().required();
+const currentPage = joi.number().required();
+
+// 获取用户列表接口
+exports.get_list = joi.object().keys({
+    pageSize,
+    currentPage,
+    status
+});
+
+// 更新用户接口
+exports.update_user_schema = joi.object().keys({
+    username,
+    status,
+    nickname,
+    email
+  });
