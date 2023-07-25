@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:54:45
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-19 11:44:07
+ * @LastEditTime: 2023-07-19 12:03:12
  * @FilePath: \vue3-ts-server\router\user.js
  */
 const express = require('express')
@@ -24,6 +24,8 @@ router.post('/refreshToken', userHandler.refreshToken);
 router.get('/list', userHandler.getList);
 // 修改用户信息
 router.post('/editUser/:id', userHandler.editUser);
+// 删除用户
+router.post('/delUser', userHandler.deleteUser);
 
 // 将路由对象共享出去
 module.exports = router

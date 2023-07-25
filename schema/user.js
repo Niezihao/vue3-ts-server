@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 16:17:06
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-19 11:14:25
+ * @LastEditTime: 2023-07-25 17:49:29
  * @FilePath: \vue3-ts-server\schema\user.js
  */
 let joi = require('joi');
@@ -24,14 +24,16 @@ joi = joi.defaults((schema) =>
 const username = joi.string().alphanum().min(1).max(10).required();
 // 密码的验证规则
 const password = joi
-  .string()
-  .pattern(/^[\S]{6,12}$/)
-  .required();
+    .string()
+    .pattern(/^[\S]{6,12}$/)
+    .required();
 const checkCode = joi.string().alphanum().min(4).max(4).required();
 const uuid = joi.number().required();
 const nickname = joi.string();
 const email = joi.string().email();
 const status = joi.number().valid(0, 1);
+const role_ids = joi.array().items(joi.number()).required();
+const user_ids = [joi.array().items(joi.number()).required(), joi.number()];
 
 // 登录表单的验证规则对象
 exports.user_login_schema = joi.object().keys({
@@ -45,6 +47,7 @@ exports.user_login_schema = joi.object().keys({
 exports.add_user_schema = joi.object().keys({
     username,
     password,
+    role_ids,
     status
 });
 
@@ -60,8 +63,15 @@ exports.get_list = joi.object().keys({
 
 // 更新用户接口
 exports.update_user_schema = joi.object().keys({
-    username,
+    username: joi.string().alphanum().min(1).max(10),
     status,
     nickname,
-    email
-  });
+    email,
+    role_ids   // 角色id数组
+});
+
+
+// 删除用户接口
+exports.delete_user_schema = joi.object().keys({
+    user_ids
+});

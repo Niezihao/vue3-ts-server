@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:57:27
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-19 11:48:48
+ * @LastEditTime: 2023-07-25 18:00:28
  * @FilePath: \vue3-ts-server\router_handler\user.js
  */
 /**
@@ -11,13 +11,15 @@
 const { Op } = require('sequelize');
 // 引入用户模型
 const UsersModel = require('../model/users');
+const RolesModel = require('../model/roles');
 
 // 1. 导入需要的验证规则对象
 const {
     user_login_schema,
     add_user_schema,
     get_list,
-    update_user_schema
+    update_user_schema,
+    delete_user_schema
 } = require('../schema/user');
 
 // 导入bcryptjs加密模块
@@ -133,9 +135,12 @@ exports.addUser = (req, res) => {
             const password = value.password;
             // 加密
             value.password = bcrypt.hashSync(password, 10);
-            const result = UsersModel.create(value);
+            // 将添加的用户设置为可用
+            value.status = 1;
+            // 添加用户角色，返回true或错误信息
+            const result = UsersModel.addUser(value);
             result.then(function (ret) {
-                if (ret) {
+                if (ret === true) {
                     return res.send({
                         code: 0,
                         message: '新增成功',
@@ -148,7 +153,7 @@ exports.addUser = (req, res) => {
                         data: null
                     });
                 }
-            });
+            })
         }
     });
 };
@@ -228,34 +233,36 @@ exports.getList = (req, res) => {
     if (error) throw error;
     // 接收前端参数
     let { pageSize, currentPage } = req.query;
+    console.log(req.query);
+    console.log(value);
     // 默认值
     limit = pageSize ? Number(pageSize) : 10;
     offset = currentPage ? Number(currentPage) : 1;
     offset = (offset - 1) * pageSize;
     let where = {};
-    let username = req.query.username;
-    let status = req.query.status;
+    let username = value.username;
+    let status = value.status;
     if (username) {
-        where.username = { [Op.like]: `%${username}%` };
+      where.username = { [Op.like]: `%${username}%` };
     }
     if (status === 0 || status === 1) {
-        where.status = { [Op.eq]: status };
+      where.status = { [Op.eq]: status };
     }
-
     UsersModel.findAndCountAll({
-        attributes: { exclude: ['password'] },
-        offset: offset,
-        limit: limit,
-        where: where
+      attributes: { exclude: ['password'] },
+      include: [{ model: RolesModel }], // 预先加载角色模型
+      distinct: true,
+      offset: offset,
+      limit: limit,
+      where: where
     }).then(function (users) {
-        return res.send({
-            code: 0,
-            message: '获取成功',
-            data: users
-        });
+      return res.send({
+        code: 0,
+        message: '获取成功',
+        data: users
+      });
     });
-
-};
+  };
 
 exports.editUser = (req, res) => {
     const user_id = req.params.id;
@@ -280,13 +287,9 @@ exports.editUser = (req, res) => {
                 data: null
             });
         else {
-            const result = UsersModel.update(value, {
-                where: {
-                    user_id: user_id
-                }
-            });
+            const result = UsersModel.updateUser(user_id, req.body);
             result.then(function (ret) {
-                if (ret) {
+                if (ret === true) {
                     return res.send({
                         code: 0,
                         message: '修改成功',
@@ -299,8 +302,57 @@ exports.editUser = (req, res) => {
                         data: null
                     });
                 }
-            });
+            })
         }
     });
-
 };
+
+exports.deleteUser = (req, res) => {
+    const { value, error } = delete_user_schema.validate(req.body);
+    if (error) throw error;
+    const user_ids = value.user_ids
+    UsersModel.delUser(user_ids || []).then(function (user) {
+        if (user !== true) {
+            return res.send({
+                code: 1,
+                message: '删除失败',
+                data: null
+            });
+        }
+        return res.send({
+            code: 0,
+            message: '删除成功',
+            data: user
+        });
+    });
+}
+
+/**
+ * 根据id获取用户信息接口
+ */
+exports.getUserinfoById = (req, res) => {
+    const { value, error } = get_userInfoById_schema.validate(req.params);
+    if (error) throw error;
+    let user_id = value.user_id;
+    UsersModel.findOne({
+      attributes: { exclude: ['password'] },
+      include: [{ model: RolesModel }], // 预先加载角色模型
+      where: {
+        user_id: user_id
+      }
+    }).then((user) => {
+      if (!user) {
+        res.send({
+          code: 1,
+          message: '用户不存在',
+          data: null
+        });
+      } else {
+        res.send({
+          code: 0,
+          message: '获取成功',
+          data: user
+        });
+      }
+    });
+  };
