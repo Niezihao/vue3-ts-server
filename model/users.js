@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 15:30:58
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-25 17:47:56
+ * @LastEditTime: 2023-07-27 12:15:44
  * @FilePath: \vue3-ts-server\model\user.js
  */
 const Sequelize = require('sequelize');

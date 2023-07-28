@@ -2,15 +2,13 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:51:24
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-19 11:46:55
+ * @LastEditTime: 2023-07-27 15:45:48
  * @FilePath: \vue3-ts-server\app.js
  */
 // 导入 express 模块
 const express = require('express')
 // 创建 express 的服务器实例
 const app = express()
-// 导入并注册用户路由模块
-const userRouter = require('./router/user')
 // 导入 cors 中间件
 const cors = require('cors')
 // 导入配置文件
@@ -33,7 +31,15 @@ app.use(
     expressJWT({ secret: config.jwtSecretKey }).unless({ path: ['/user/login', '/user/checkCode', '/user/refreshToken'] })
 );
 
-app.use('/user', userRouter)
+// 导入并注册用户路由模块
+const userRouter = require('./router/user');
+app.use('/user', userRouter);
+// 导入并注册用户角色模块
+const roleRouter = require('./router/role');
+app.use('/user/role', roleRouter);
+// 导入并注册用户菜单模块
+const menuRouter = require('./router/menu');
+app.use('/user/menu', menuRouter);
 
 // 此段代码要放置在路由之后才可捕获到错误
 // 导入验证规则中间件

@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 16:55:58
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-17 17:04:46
+ * @LastEditTime: 2023-07-27 16:09:11
  * @FilePath: \vue3-ts-server\utils\redis.js
  */
 
@@ -21,7 +21,7 @@ client.on('connect', () => {
     console.log('redis connect success');
 });
 
-client.auth(config.password);
+// client.auth(config.password);
 
 // 要导出的对象
 const redisConnect = {};
