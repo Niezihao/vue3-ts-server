@@ -7,13 +7,13 @@ const { add_menu_schema, edit_menu_schema, delete_menu_schema, get_menu_schema }
 function filterRoutes(routes) {
   const res = [];
   routes.forEach((item) => {
-    // 目录、菜单是否存在孩子
+    // 目录、菜单是否存在子菜单、按钮
     if (item.children) {
-      // 检测菜单孩子是否存在按钮
+      // 检测子菜单是否存在按钮
       if (item.children.some((item) => item.type === 'B')) {
         const perms = [];
         const children = [];
-        // 若是按钮的用perm数组存储、是菜单的用children存储
+        // 若是按钮的用perms数组存储、是菜单的用children存储
         item.children.forEach((_item) => {
           if (_item.type === 'B') {
             perms.push({
@@ -36,7 +36,9 @@ function filterRoutes(routes) {
           menuItem.children = filterRoutes(menuItem.children);
         }
         res.push(menuItem);
-      } else {
+      }
+      // 子菜单不存在按钮
+      else {
         const menuItem = {
           value: item.menu_id,
           label: item.title,
@@ -48,7 +50,9 @@ function filterRoutes(routes) {
         }
         res.push(menuItem);
       }
-    } else {
+    }
+    // 不存在子菜单
+    else {
       const menuItem = {
         value: item.menu_id,
         label: item.title
@@ -59,6 +63,7 @@ function filterRoutes(routes) {
   });
   return res;
 }
+
 exports.getMenuList = (req, res) => {
   MenusModel.getListTree(req.query).then(function (menuTree) {
     return res.send({

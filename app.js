@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:51:24
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-27 15:45:48
+ * @LastEditTime: 2023-07-31 15:00:56
  * @FilePath: \vue3-ts-server\app.js
  */
 // 导入 express 模块
@@ -40,6 +40,9 @@ app.use('/user/role', roleRouter);
 // 导入并注册用户菜单模块
 const menuRouter = require('./router/menu');
 app.use('/user/menu', menuRouter);
+// 导入用户信息路由模块
+const userinfoRouter = require('./router/userinfo');
+app.use('/user/myInfo', userinfoRouter);
 
 // 此段代码要放置在路由之后才可捕获到错误
 // 导入验证规则中间件
@@ -51,7 +54,7 @@ app.use((err, req, res, next) => {
     // token解析失败
     if (err.name === 'UnauthorizedError') return res.send({ code: 401, message: '身份认证失败' });
     // 未知错误
-    return res.send({ code: 500, message: err });
+    return res.send({ code: 500, message: JSON.stringify(err) === '{}' ? '未知错误' : err });
 });
 
 
