@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:54:45
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-19 12:03:12
+ * @LastEditTime: 2023-08-17 10:31:04
  * @FilePath: \vue3-ts-server\router\user.js
  */
 const express = require('express')
@@ -26,7 +26,8 @@ router.get('/list', userHandler.getList);
 router.post('/editUser/:id', userHandler.editUser);
 // 删除用户
 router.post('/delUser', userHandler.deleteUser);
-
+// 根据id获取用户信息接口
+router.get('/queryUserInfo/:user_id', userHandler.getUserinfoById);
 // 将路由对象共享出去
 module.exports = router
 

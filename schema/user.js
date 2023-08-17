@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 16:17:06
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-25 17:49:29
+ * @LastEditTime: 2023-08-17 10:37:44
  * @FilePath: \vue3-ts-server\schema\user.js
  */
 let joi = require('joi');
@@ -20,6 +20,8 @@ joi = joi.defaults((schema) =>
  * required() 值是必填项，不能为 undefined
  * pattern(正则表达式) 值必须符合正则表达式的规则
  */
+// 用户id的校验规则
+const user_id = joi.number().min(0).required();
 // 用户名的校验规则
 const username = joi.string().alphanum().min(1).max(10).required();
 // 密码的验证规则
@@ -70,7 +72,10 @@ exports.update_user_schema = joi.object().keys({
     role_ids   // 角色id数组
 });
 
-
+// 根据id获取用户信息
+exports.get_userInfoById_schema = joi.object().keys({
+    user_id
+  });
 // 删除用户接口
 exports.delete_user_schema = joi.object().keys({
     user_ids

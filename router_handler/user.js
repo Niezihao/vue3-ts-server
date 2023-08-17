@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:57:27
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-25 18:00:28
+ * @LastEditTime: 2023-08-17 16:53:07
  * @FilePath: \vue3-ts-server\router_handler\user.js
  */
 /**
@@ -19,7 +19,8 @@ const {
     add_user_schema,
     get_list,
     update_user_schema,
-    delete_user_schema
+    delete_user_schema,
+    get_userInfoById_schema
 } = require('../schema/user');
 
 // 导入bcryptjs加密模块
@@ -355,4 +356,4 @@ exports.getUserinfoById = (req, res) => {
         });
       }
     });
-  };
+  };  
