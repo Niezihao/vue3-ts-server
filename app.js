@@ -2,7 +2,7 @@
  * @Author: niezihao 1332421989@qq.com
  * @Date: 2023-07-17 11:51:24
  * @LastEditors: niezihao 1332421989@qq.com
- * @LastEditTime: 2023-07-31 15:00:56
+ * @LastEditTime: 2023-08-18 12:28:06
  * @FilePath: \vue3-ts-server\app.js
  */
 // 导入 express 模块
@@ -43,6 +43,12 @@ app.use('/user/menu', menuRouter);
 // 导入用户信息路由模块
 const userinfoRouter = require('./router/userinfo');
 app.use('/user/myInfo', userinfoRouter);
+// 导入字典路由模块
+const dictRouter = require('./router/dict');
+app.use('/dict', dictRouter);
+// 导入字典项路由模块
+const dictItemRouter = require('./router/dict-items');
+app.use('/dict/item', dictItemRouter);
 
 // 此段代码要放置在路由之后才可捕获到错误
 // 导入验证规则中间件
